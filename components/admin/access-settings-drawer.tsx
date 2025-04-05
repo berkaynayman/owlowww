@@ -12,6 +12,7 @@ import {
   FormControl,
   FormControlLabel,
   Divider,
+  Button,
 } from "@mui/material"
 import {
   Close as CloseIcon,
@@ -269,6 +270,43 @@ export default function AccessSettingsDrawer({ open, onClose, accessData, onSave
               className: "dark:bg-gray-700 dark:text-white",
             }}
           />
+        </Box>
+
+        {/* Action buttons */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={onClose}
+            sx={{
+              borderRadius: "30px",
+              textTransform: "none",
+              px: 3,
+              py: 1,
+              borderColor: "#e5e7eb",
+              color: "#374151",
+            }}
+            className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+          >
+            {t.cancel}
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            sx={{
+              backgroundColor: "#2563eb",
+              color: "white",
+              borderRadius: "30px",
+              textTransform: "none",
+              px: 3,
+              py: 1,
+              "&:hover": {
+                backgroundColor: "#1d4ed8",
+              },
+            }}
+            className="dark:bg-blue-600 dark:hover:bg-blue-700"
+          >
+            {t.save}
+          </Button>
         </Box>
       </Box>
     </Drawer>

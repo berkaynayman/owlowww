@@ -238,8 +238,15 @@ export default function AdminCoursesPage() {
           <Button
             variant="outlined"
             startIcon={<SettingsIcon />}
-            sx={{ borderRadius: 2 }}
-            className="dark:border-gray-600 dark:text-white"
+            sx={{
+              borderRadius: "30px",
+              textTransform: "none",
+              px: 3,
+              py: 1,
+              borderColor: "#e5e7eb",
+              color: "#374151",
+            }}
+            className="dark:border-gray-600 dark:text-white dark:hover:bg-gray-700"
             onClick={() => handleOpenPropertiesDrawer(courses[0])}
           >
             {t.properties}
@@ -248,9 +255,15 @@ export default function AdminCoursesPage() {
             variant="contained"
             startIcon={<AddIcon />}
             sx={{
-              backgroundColor: "#2196f3",
+              backgroundColor: "#2563eb",
               color: "white",
-              borderRadius: 2,
+              borderRadius: "30px",
+              textTransform: "none",
+              px: 3,
+              py: 1,
+              "&:hover": {
+                backgroundColor: "#1d4ed8",
+              },
             }}
             className="dark:bg-blue-600 dark:hover:bg-blue-700"
             onClick={handleOpenNewChapterModal}
@@ -526,7 +539,14 @@ export default function AdminCoursesPage() {
         className="dark:border-gray-700"
         onClick={handleOpenNewChapterModal}
       >
-        <Button startIcon={<AddIcon />} sx={{ color: "#2196f3" }} className="dark:text-blue-400">
+        <Button
+          startIcon={<AddIcon />}
+          sx={{
+            color: "#2563eb",
+            textTransform: "none",
+          }}
+          className="dark:text-blue-400"
+        >
           {t.addChapter} hinzufügen
         </Button>
       </Box>
@@ -555,4 +575,3 @@ export default function AdminCoursesPage() {
     </Box>
   )
 }
-

@@ -109,7 +109,14 @@ export default function NewChapterModal({ open, onClose, onSave }: NewChapterMod
         <Button
           onClick={handleClose}
           variant="outlined"
-          sx={{ borderRadius: 2, textTransform: "none" }}
+          sx={{
+            borderRadius: "30px",
+            textTransform: "none",
+            px: 3,
+            py: 1,
+            borderColor: "#e5e7eb",
+            color: "#374151",
+          }}
           className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           {t.cancel}
@@ -118,10 +125,15 @@ export default function NewChapterModal({ open, onClose, onSave }: NewChapterMod
           onClick={handleSave}
           variant="contained"
           sx={{
-            backgroundColor: "#2196f3",
+            backgroundColor: "#2563eb",
             color: "white",
-            borderRadius: 2,
+            borderRadius: "30px",
             textTransform: "none",
+            px: 3,
+            py: 1,
+            "&:hover": {
+              backgroundColor: "#1d4ed8",
+            },
           }}
           className="dark:bg-blue-600 dark:hover:bg-blue-700"
         >
@@ -131,3 +143,4 @@ export default function NewChapterModal({ open, onClose, onSave }: NewChapterMod
     </Dialog>
   )
 }
+
