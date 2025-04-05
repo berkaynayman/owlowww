@@ -1,7 +1,19 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Button, Typography, IconButton, Card, CardContent, Collapse, Divider } from "@mui/material"
+import {
+  Box,
+  Button,
+  Typography,
+  IconButton,
+  Card,
+  CardContent,
+  Collapse,
+  Divider,
+  Select,
+  MenuItem,
+  FormControl,
+} from "@mui/material"
 import {
   Add as AddIcon,
   ExpandMore as ExpandMoreIcon,
@@ -14,6 +26,7 @@ import { useRouter } from "next/navigation"
 import CoursePropertiesDrawer from "@/components/admin/course-properties-drawer"
 import ModulePropertiesDrawer from "@/components/admin/module-properties-drawer"
 import CourseItemMenu from "@/components/admin/course-item-menu"
+import NewChapterModal from "@/components/admin/new-chapter-modal"
 import { toast } from "sonner"
 
 // Mock data for courses
@@ -80,6 +93,7 @@ export default function AdminCoursesPage() {
   const [selectedModule, setSelectedModule] = useState<any>(null)
   const [selectedLesson, setSelectedLesson] = useState<any>(null)
   const [isChapter, setIsChapter] = useState(true)
+  const [newChapterModalOpen, setNewChapterModalOpen] = useState(false)
 
   const translations = {
     de: {
@@ -88,23 +102,31 @@ export default function AdminCoursesPage() {
       addChapter: "Kapitel",
       properties: "Eigenschaften",
       soonAvailable: "Bald verfügbar",
+      published: "Veröffentlicht",
+      draft: "Entwurf",
+      archived: "Archiviert",
       duplicated: "Kurs dupliziert",
       notificationSent: "Benachrichtigung gesendet",
       deleted: "Gelöscht",
       lessonDuplicated: "Lektion dupliziert",
       lessonDeleted: "Lektion gelöscht",
+      chapterCreated: "Kapitel erstellt",
     },
     en: {
       title: "Course Management",
       addCourse: "Add Course",
-      addChapter: "Chapter",
+      addChapter: "Add Chapter",
       properties: "Properties",
       soonAvailable: "Soon available",
+      published: "Published",
+      draft: "Draft",
+      archived: "Archived",
       duplicated: "Course duplicated",
       notificationSent: "Notification sent",
       deleted: "Deleted",
       lessonDuplicated: "Lesson duplicated",
       lessonDeleted: "Lesson deleted",
+      chapterCreated: "Chapter created",
     },
   }
 
@@ -157,6 +179,35 @@ export default function AdminCoursesPage() {
     router.push(`/admin/courses/lesson/${lessonId}`)
   }
 
+  const handleStatusChange = (event, moduleId) => {
+    event.stopPropagation()
+    // Here you would update the status in your state/database
+    console.log(`Status changed for module ${moduleId} to ${event.target.value}`)
+  }
+
+  const handleOpenNewChapterModal = () => {
+    setNewChapterModalOpen(true)
+  }
+
+  const handleCreateNewChapter = (name: string) => {
+    // Here you would create a new chapter in your state/database
+    console.log(`Creating new chapter: ${name}`)
+
+    // Add the new chapter to the first course
+    const newModule = {
+      id: `m${courses[0].modules.length + 1}`,
+      title: name,
+      status: "draft",
+      lessons: [],
+    }
+
+    const updatedCourses = [...courses]
+    updatedCourses[0].modules.push(newModule)
+    setCourses(updatedCourses)
+
+    toast.success(t.chapterCreated)
+  }
+
   return (
     <Box sx={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -202,6 +253,7 @@ export default function AdminCoursesPage() {
               borderRadius: 2,
             }}
             className="dark:bg-blue-600 dark:hover:bg-blue-700"
+            onClick={handleOpenNewChapterModal}
           >
             {t.addChapter}
           </Button>
@@ -226,7 +278,7 @@ export default function AdminCoursesPage() {
           className="dark:bg-gray-800 dark:border dark:border-gray-500"
         >
           <CardContent sx={{ p: 0 }}>
-            <Box sx={{ display: "flex", p: 2 }} className="dark:bg-gray-700">
+            <Box sx={{ display: "flex", p: 2 }}>
               <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
                 <Box
                   sx={{
@@ -260,7 +312,7 @@ export default function AdminCoursesPage() {
                   <Typography variant="body2">{module.id === "m1" ? "Einleitung" : ""}</Typography>
                 </Box>
                 <Typography variant="h6" className="dark:text-white">
-                  {module.title}ds
+                  {module.title}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -283,10 +335,39 @@ export default function AdminCoursesPage() {
                       backgroundColor: "orange",
                     }}
                   />
-                  <Typography variant="body2" className="dark:text-white">
-                    {t.soonAvailable}
-                  </Typography>
-                  <ExpandMoreIcon fontSize="small" className="dark:text-white" />
+                  <FormControl
+                    variant="standard"
+                    sx={{
+                      minWidth: 120,
+                      "& .MuiInput-underline:before": { borderBottom: "none" },
+                      "& .MuiInput-underline:after": { borderBottom: "none" },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": { borderBottom: "none" },
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Select
+                      value={module.status}
+                      onChange={(e) => handleStatusChange(e, module.id)}
+                      disableUnderline
+                      sx={{
+                        fontSize: "0.875rem",
+                        fontWeight: 500,
+                        "& .MuiSelect-select": {
+                          paddingBottom: 0,
+                          paddingTop: 0,
+                          paddingRight: "24px !important",
+                        },
+                        "& .MuiSelect-icon": { right: 0 },
+                      }}
+                      className="dark:text-white"
+                      IconComponent={ExpandMoreIcon}
+                    >
+                      <MenuItem value="soon">{t.soonAvailable}</MenuItem>
+                      <MenuItem value="published">{t.published}</MenuItem>
+                      <MenuItem value="draft">{t.draft}</MenuItem>
+                      <MenuItem value="archived">{t.archived}</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
                 <CourseItemMenu
                   onOpenProperties={() => handleOpenModuleProperties(module)}
@@ -308,7 +389,7 @@ export default function AdminCoursesPage() {
             >
               {expandedModule === module.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </Box>
-            <Collapse in={expandedModule === module.id} className="dark:bg-gray-700">
+            <Collapse in={expandedModule === module.id}>
               <Divider />
               {module.lessons.map((lesson, index) => (
                 <Box key={lesson.id}>
@@ -380,10 +461,39 @@ export default function AdminCoursesPage() {
                             backgroundColor: "orange",
                           }}
                         />
-                        <Typography variant="body2" className="dark:text-white">
-                          {t.soonAvailable}
-                        </Typography>
-                        <ExpandMoreIcon fontSize="small" className="dark:text-white" />
+                        <FormControl
+                          variant="standard"
+                          sx={{
+                            minWidth: 120,
+                            "& .MuiInput-underline:before": { borderBottom: "none" },
+                            "& .MuiInput-underline:after": { borderBottom: "none" },
+                            "& .MuiInput-underline:hover:not(.Mui-disabled):before": { borderBottom: "none" },
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Select
+                            value={lesson.status}
+                            onChange={(e) => handleStatusChange(e, lesson.id)}
+                            disableUnderline
+                            sx={{
+                              fontSize: "0.875rem",
+                              fontWeight: 500,
+                              "& .MuiSelect-select": {
+                                paddingBottom: 0,
+                                paddingTop: 0,
+                                paddingRight: "24px !important",
+                              },
+                              "& .MuiSelect-icon": { right: 0 },
+                            }}
+                            className="dark:text-white"
+                            IconComponent={ExpandMoreIcon}
+                          >
+                            <MenuItem value="soon">{t.soonAvailable}</MenuItem>
+                            <MenuItem value="published">{t.published}</MenuItem>
+                            <MenuItem value="draft">{t.draft}</MenuItem>
+                            <MenuItem value="archived">{t.archived}</MenuItem>
+                          </Select>
+                        </FormControl>
                       </Box>
                       <CourseItemMenu
                         onOpenProperties={() => handleOpenModuleProperties(lesson, false)}
@@ -413,7 +523,8 @@ export default function AdminCoursesPage() {
           mt: 4,
           cursor: "pointer",
         }}
-        className="dark:border-gray-400"
+        className="dark:border-gray-700"
+        onClick={handleOpenNewChapterModal}
       >
         <Button startIcon={<AddIcon />} sx={{ color: "#2196f3" }} className="dark:text-blue-400">
           {t.addChapter} hinzufügen
@@ -433,6 +544,13 @@ export default function AdminCoursesPage() {
         onClose={() => setModulePropertiesDrawerOpen(false)}
         module={selectedModule}
         isChapter={isChapter}
+      />
+
+      {/* New Chapter Modal */}
+      <NewChapterModal
+        open={newChapterModalOpen}
+        onClose={() => setNewChapterModalOpen(false)}
+        onSave={handleCreateNewChapter}
       />
     </Box>
   )
